@@ -132,3 +132,96 @@ Hierarquia de um sistema de arquivos representada como árvore N-ária:
 - **DOM / XML / JSON** (estrutura de páginas e documentos).
 - **Menus, taxonomias e categorias** de e-commerce.
 - **Árvores de decisão** em IA e jogos.
+
+## Parte 2 — Operações em Árvores
+
+As rotações são operações **locais** que reorganizam alguns nós para restaurar o balanceamento **sem violar** a ordenação da BST.
+
+### Rotação Simples à Direita
+
+- **Objetivo:** corrigir um desbalanceamento causado por excesso de altura na **subárvore esquerda**.
+- **Situação em que é utilizada:** caso **Esquerda-Esquerda (LL)** — o nó está desbalanceado à esquerda e seu filho esquerdo também pende para a esquerda (FB do nó = +2 e FB do filho ≥ 0).
+- **Exemplo antes e depois:**
+
+```
+        Antes (FB = +2)            Depois (FB = 0)
+
+             30                         20
+            /                          /  \
+          20             →           10    30
+         /
+        10
+```
+
+### Rotação Simples à Esquerda
+
+- **Objetivo:** corrigir um desbalanceamento causado por excesso de altura na **subárvore direita**.
+- **Situação em que é utilizada:** caso **Direita-Direita (RR)** — o nó está desbalanceado à direita e seu filho direito também pende para a direita (FB do nó = −2 e FB do filho ≤ 0).
+- **Exemplo antes e depois:**
+
+```
+     Antes (FB = −2)            Depois (FB = 0)
+
+       10                            20
+         \                          /  \
+          20           →          10    30
+            \
+             30
+```
+
+### Rotação Dupla
+
+Usada quando o desbalanceamento está "em zigue-zague". Combina duas rotações simples.
+
+#### Esquerda-Direita (LR)
+
+Ocorre quando o nó pende para a **esquerda**, mas o filho esquerdo pende para a **direita**. Solução: **rotação à esquerda no filho** + **rotação à direita no nó**.
+
+```
+   Inicial         1ª rotação (esq. no 10)    2ª rotação (dir. no 30)
+
+     30                  30                          20
+    /                   /                           /  \
+  10        →         20            →             10    30
+    \                /
+     20            10
+```
+
+#### Direita-Esquerda (RL)
+
+Ocorre quando o nó pende para a **direita**, mas o filho direito pende para a **esquerda**. Solução: **rotação à direita no filho** + **rotação à esquerda no nó**.
+
+```
+   Inicial         1ª rotação (dir. no 30)    2ª rotação (esq. no 10)
+
+   10                  10                          20
+     \                   \                        /  \
+      30      →           20          →         10    30
+     /                      \
+    20                       30
+```
+
+### Inversão (Espelhamento)
+
+- **Conceito:** operação que **troca recursivamente** a subárvore esquerda pela direita de **todos** os nós, produzindo a imagem espelhada da árvore. Diferente das rotações, **não tem o objetivo de balancear** — ela inverte a ordem.
+- **Aplicação:** exercícios e entrevistas de algoritmos (o famoso "*invert a binary tree*"), processamento de imagens hierárquicas, geração de estruturas simétricas e testes de manipulação de árvores.
+- **Exemplo antes e depois:**
+
+```
+        Antes                       Depois (espelhada)
+
+          1                              1
+        /   \                          /   \
+       2     3          →             3     2
+      / \                                  / \
+     4   5                                5   4
+```
+
+Em pseudocódigo:
+
+```
+inverter(no):
+    se no == nulo: retorne
+    troca(no.esquerda, no.direita)
+    inverter(no.esquerda)
+    inverter(no.direita)```
