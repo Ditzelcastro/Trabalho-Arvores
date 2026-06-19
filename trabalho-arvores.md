@@ -225,3 +225,204 @@ inverter(no):
     troca(no.esquerda, no.direita)
     inverter(no.esquerda)
     inverter(no.direita)```
+
+## Parte 3 - Aplicação Prática
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+ 
+#define MAX_NOME 64
+#define MAX_FILHOS 32
+ 
+typedef enum { PASTA, ARQUIVO } TipoNo;
+ 
+typedef struct No {
+    char nome[MAX_NOME];
+    TipoNo tipo;
+    struct No *filhos[MAX_FILHOS];
+    int totalFilhos;
+} No;
+ 
+/* Cria um novo no (pasta ou arquivo) */
+No *criarNo(const char *nome, TipoNo tipo) {
+    No *novo = (No *) malloc(sizeof(No));
+    if (novo == NULL) {
+        fprintf(stderr, "Erro: falha ao alocar memoria para '%s'\n", nome);
+        exit(EXIT_FAILURE);
+    }
+    strncpy(novo->nome, nome, MAX_NOME - 1);
+    novo->nome[MAX_NOME - 1] = '\0';
+    novo->tipo = tipo;
+    novo->totalFilhos = 0;
+    return novo;
+}
+ 
+/* Insere um filho (arquivo ou subpasta) dentro de uma pasta */
+int inserirFilho(No *pai, No *filho) {
+    if (pai->tipo != PASTA) {
+        fprintf(stderr, "Erro: '%s' nao e uma pasta, nao pode ter filhos.\n", pai->nome);
+        return 0;
+    }
+    if (pai->totalFilhos >= MAX_FILHOS) {
+        fprintf(stderr, "Erro: '%s' atingiu o limite de filhos.\n", pai->nome);
+        return 0;
+    }
+    pai->filhos[pai->totalFilhos++] = filho;
+    return 1;
+}
+ 
+/* Percorre a arvore em pre-ordem, exibindo a hierarquia com indentacao */
+void listarArvore(No *no, int nivel) {
+    if (no == NULL) return;
+ 
+    for (int i = 0; i < nivel; i++) {
+        printf("  ");
+    }
+ 
+    if (no->tipo == PASTA) {
+        printf("[PASTA] %s/\n", no->nome);
+    } else {
+        printf("[ARQUIVO] %s\n", no->nome);
+    }
+ 
+    for (int i = 0; i < no->totalFilhos; i++) {
+        listarArvore(no->filhos[i], nivel + 1);
+    }
+}
+ 
+/* Busca recursiva por nome em toda a arvore (retorna o primeiro no encontrado) */
+No *buscarPorNome(No *no, const char *nome) {
+    if (no == NULL) return NULL;
+ 
+    if (strcmp(no->nome, nome) == 0) {
+        return no;
+    }
+ 
+    for (int i = 0; i < no->totalFilhos; i++) {
+        No *encontrado = buscarPorNome(no->filhos[i], nome);
+        if (encontrado != NULL) {
+            return encontrado;
+        }
+    }
+ 
+    return NULL;
+}
+ 
+/* Libera recursivamente toda a memoria de uma subarvore */
+void liberarArvore(No *no) {
+    if (no == NULL) return;
+ 
+    for (int i = 0; i < no->totalFilhos; i++) {
+        liberarArvore(no->filhos[i]);
+    }
+ 
+    free(no);
+}
+ 
+/* Remove (e libera) um filho de uma pasta, pelo nome */
+int removerFilho(No *pai, const char *nome) {
+    if (pai == NULL || pai->tipo != PASTA) return 0;
+ 
+    for (int i = 0; i < pai->totalFilhos; i++) {
+        if (strcmp(pai->filhos[i]->nome, nome) == 0) {
+            liberarArvore(pai->filhos[i]);
+ 
+            /* reorganiza o vetor de filhos, preenchendo o espaco removido */
+            for (int j = i; j < pai->totalFilhos - 1; j++) {
+                pai->filhos[j] = pai->filhos[j + 1];
+            }
+            pai->totalFilhos--;
+            return 1;
+        }
+    }
+ 
+    return 0;
+}
+ 
+/* Conta recursivamente quantos arquivos (nao pastas) existem na arvore */
+int contarArquivos(No *no) {
+    if (no == NULL) return 0;
+ 
+    int total = (no->tipo == ARQUIVO) ? 1 : 0;
+ 
+    for (int i = 0; i < no->totalFilhos; i++) {
+        total += contarArquivos(no->filhos[i]);
+    }
+ 
+    return total;
+}
+ 
+int main(void) {
+    /* Monta a hierarquia:
+     *
+     * raiz/
+     *   home/
+     *     usuario/
+     *       documentos/
+     *         relatorio.pdf
+     *         apresentacao.pptx
+     *       imagens/
+     *         foto1.png
+     *   etc/
+     *     config.txt
+     */
+ 
+    No *raiz = criarNo("raiz", PASTA);
+ 
+    No *home = criarNo("home", PASTA);
+    No *usuario = criarNo("usuario", PASTA);
+    No *documentos = criarNo("documentos", PASTA);
+    No *imagens = criarNo("imagens", PASTA);
+    No *etc = criarNo("etc", PASTA);
+ 
+    No *relatorio = criarNo("relatorio.pdf", ARQUIVO);
+    No *apresentacao = criarNo("apresentacao.pptx", ARQUIVO);
+    No *foto1 = criarNo("foto1.png", ARQUIVO);
+    No *config = criarNo("config.txt", ARQUIVO);
+ 
+    inserirFilho(raiz, home);
+    inserirFilho(raiz, etc);
+ 
+    inserirFilho(home, usuario);
+ 
+    inserirFilho(usuario, documentos);
+    inserirFilho(usuario, imagens);
+ 
+    inserirFilho(documentos, relatorio);
+    inserirFilho(documentos, apresentacao);
+ 
+    inserirFilho(imagens, foto1);
+ 
+    inserirFilho(etc, config);
+ 
+    printf("===== Estrutura inicial do sistema de arquivos =====\n");
+    listarArvore(raiz, 0);
+ 
+    printf("\nTotal de arquivos na arvore: %d\n", contarArquivos(raiz));
+ 
+    printf("\n===== Buscando 'foto1.png' =====\n");
+    No *encontrado = buscarPorNome(raiz, "foto1.png");
+    if (encontrado != NULL) {
+        printf("Encontrado: %s (tipo: %s)\n", encontrado->nome,
+               encontrado->tipo == ARQUIVO ? "ARQUIVO" : "PASTA");
+    } else {
+        printf("Nao encontrado.\n");
+    }
+ 
+    printf("\n===== Removendo 'apresentacao.pptx' de 'documentos' =====\n");
+    if (removerFilho(documentos, "apresentacao.pptx")) {
+        printf("Removido com sucesso.\n");
+    } else {
+        printf("Arquivo nao encontrado para remocao.\n");
+    }
+ 
+    printf("\n===== Estrutura apos remocao =====\n");
+    listarArvore(raiz, 0);
+ 
+    printf("\nTotal de arquivos na arvore: %d\n", contarArquivos(raiz));
+ 
+    liberarArvore(raiz);
+ 
+    return 0;
+}
