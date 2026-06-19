@@ -421,6 +421,10 @@ int main(void) {
     listarArvore(raiz, 0);
  
     printf("\nTotal de arquivos na arvore: %d\n", contarArquivos(raiz));
+ 
+    return 0;
+}
+
 
  ## Parte 4 — Comparação entre Estruturas
 
@@ -447,6 +451,3 @@ int main(void) {
 
 ---
     liberarArvore(raiz);
- 
-    return 0;
-}
