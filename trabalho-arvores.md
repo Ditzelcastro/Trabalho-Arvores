@@ -421,7 +421,31 @@ int main(void) {
     listarArvore(raiz, 0);
  
     printf("\nTotal de arquivos na arvore: %d\n", contarArquivos(raiz));
- 
+
+ ## Parte 4 — Comparação entre Estruturas
+
+| Estrutura | Nº Máx. de Filhos | Balanceamento | Complexidade de Busca | Complexidade de Inserção | Vantagem Principal | Desvantagem Principal | Exemplo de Aplicação |
+|---|---|---|---|---|---|---|---|
+| *BST* | 2 | Não possui balanceamento automático. Pode ficar desbalanceada conforme a ordem de inserção. | O(log n) no melhor caso e O(n) no pior caso | O(log n) no melhor caso e O(n) no pior caso | Estrutura simples de entender e implementar | Pode perder desempenho se ficar desbalanceada | Árvores de busca básicas |
+| *AVL* | 2 | Sim. Mantém o fator de balanceamento com rotações | O(log n) | O(log n) | Busca previsível e eficiente | Inserção e remoção mais custosas por causa das rotações | Índices e estruturas que exigem leitura frequente |
+| *Rubro-Negra* | 2 | Sim. Usa coloração e rotações para manter o balanceamento aproximado | O(log n) | O(log n) | Balanceamento eficiente com menos rotações que a AVL | Implementação mais complexa | Bibliotecas e estruturas internas de sistemas |
+| *N-ária* | N (vários filhos) | Pode ou não possuir mecanismos de balanceamento, dependendo da variação | O(log n) em estruturas balanceadas, mas depende da aplicação | O(log n) ou proporcional à estrutura da árvore | Representa melhor hierarquias com muitos filhos | Não é tão simples quanto a árvore binária em alguns contextos | Sistema de arquivos, menus e taxonomias |
+
+### Explicação das informações apresentadas
+
+- *Nº Máximo de Filhos:* BST, AVL e Rubro-Negra são *binárias* (no máximo 2 filhos por nó). A N-ária permite *N filhos*, o que a torna ideal para hierarquias amplas.
+- *Balanceamento:* a BST *não* se balanceia sozinha e pode degenerar. AVL e Rubro-Negra *se balanceiam automaticamente* — a AVL de forma rígida (rotações) e a Rubro-Negra de forma aproximada (cores + rotações). A N-ária só se balanceia em variações específicas, como as Árvores B/B+.
+- *Complexidade de Busca:* as estruturas balanceadas garantem *O(log n); a BST só atinge isso no melhor caso, caindo para **O(n)* quando degenera em "lista".
+- *Complexidade de Inserção:* segue a mesma lógica da busca — O(log n) nas balanceadas e O(n) no pior caso da BST.
+- *Vantagem Principal:* cada estrutura otimiza algo diferente — a BST a simplicidade, a AVL a velocidade de busca, a Rubro-Negra o custo de escrita, e a N-ária a representação de hierarquias.
+- *Desvantagem Principal:* geralmente um trade-off entre *simplicidade* e *garantia de desempenho* — quanto mais garantias, mais complexa a implementação.
+- *Exemplo de Aplicação:* mostra onde cada estrutura é usada na prática, da teoria (BST) até sistemas reais (índices, bibliotecas, sistemas de arquivos).
+
+#### Síntese
+
+> A BST é a base conceitual; a AVL e a Rubro-Negra resolvem o problema do *desbalanceamento* em memória (a AVL favorece leitura, a Rubro-Negra favorece escrita); e as estruturas N-árias balanceadas resolvem o problema do *armazenamento em disco* e da *representação de hierarquias*. A escolha depende sempre do perfil de operações (mais leitura ou mais escrita), do volume de dados e de onde eles ficam armazenados.
+
+---
     liberarArvore(raiz);
  
     return 0;
