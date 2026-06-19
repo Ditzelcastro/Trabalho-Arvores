@@ -10,10 +10,10 @@ Aplicação Prática — justificativa do uso de Árvores B/B+ como estrutura de
 Comparação entre Estruturas — tabela comparativa entre BST, AVL, Rubro-Negra e N-ária, com explicação de cada critério.
 
 👥 Grupo
-João Guilherme Telles Ditzel
-IGor de Almeida Oliveira
-Heitor Domingos de Carvalho Sauer
-Gustavo Henrique Witsmiszym
+João Guilherme Telles Ditzel.
+Igor de Almeida Oliveira.
+Heitor Domingos de Carvalho Sauer.
+Gustavo Henrique Witsmiszym.
 
 🗂️ Estrutura do repositório
 .
