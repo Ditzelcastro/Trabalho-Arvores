@@ -226,6 +226,8 @@ inverter(no):
     inverter(no.esquerda)
     inverter(no.direita)```
 
+```
+
 ## Parte 3 - Aplicação Prática
 
 #include <stdio.h>
